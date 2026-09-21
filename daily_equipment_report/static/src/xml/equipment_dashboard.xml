@@ -816,6 +816,17 @@
 
                                     <span>
 
+                                        <i class="o_eq_dot o_eq_dot_high"/>
+
+                                        High
+
+                                        <strong t-esc="state.data.analytics.severity.high"/>
+
+                                    </span>
+
+
+                                    <span>
+
                                         <i class="o_eq_dot o_eq_dot_red"/>
 
                                         Critical
@@ -1379,7 +1390,7 @@
                                                 <td>
 
                                                     <span class="badge rounded-pill"
-                                                          t-att-class="row.severity === 'critical' ? 'text-bg-danger' : (row.severity === 'medium' ? 'text-bg-warning' : 'text-bg-success')"
+                                                          t-att-class="row.severity === 'critical' ? 'text-bg-danger' : (row.severity === 'high' ? 'text-bg-primary' : (row.severity === 'medium' ? 'text-bg-warning' : 'text-bg-success'))"
                                                           t-esc="row.severity || '-'"/>
 
                                                 </td>

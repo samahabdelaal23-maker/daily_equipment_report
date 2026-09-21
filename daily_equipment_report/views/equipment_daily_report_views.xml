@@ -102,6 +102,7 @@
                                            readonly="1"
                                            decoration-info="failure_severity == 'low'"
                                            decoration-warning="failure_severity == 'medium'"
+                                           decoration-primary="failure_severity == 'high'"
                                            decoration-danger="failure_severity == 'critical'"/>
                                     <field name="answer"
                                            widget="radio"

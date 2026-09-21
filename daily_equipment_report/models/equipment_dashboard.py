@@ -908,6 +908,10 @@ class EquipmentInspectionDashboard(models.AbstractModel):
                     "label": "Medium",
                 },
                 {
+                    "value": "high",
+                    "label": "High",
+                },
+                {
                     "value": "critical",
                     "label": "Critical",
                 },
@@ -952,6 +956,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
         result = {
             "low": 0,
             "medium": 0,
+            "high": 0,
             "critical": 0,
         }
 

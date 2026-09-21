@@ -19,7 +19,7 @@ class EquipmentChecklistQuestion(models.Model):
         selection=[
             ("low", "Low"),
             ("medium", "Medium"),
-            ("high","High"),
+            ("high", "High"),
             ("critical", "Critical"),
         ],
         string="Failure Severity",

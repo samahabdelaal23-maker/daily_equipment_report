@@ -12,6 +12,7 @@
                        widget="badge"
                        decoration-info="failure_severity == 'low'"
                        decoration-warning="failure_severity == 'medium'"
+                       decoration-primary="failure_severity == 'high'"
                        decoration-danger="failure_severity == 'critical'"/>
                 <field name="active" column_invisible="True"/>
             </list>
@@ -63,6 +64,9 @@
                 <field name="name"/>
                 <field name="category_id"/>
                 <field name="failure_severity"/>
+                <filter string="High"
+                        name="high"
+                        domain="[('failure_severity', '=', 'high')]"/>
                 <filter string="Critical"
                         name="critical"
                         domain="[('failure_severity', '=', 'critical')]"/>

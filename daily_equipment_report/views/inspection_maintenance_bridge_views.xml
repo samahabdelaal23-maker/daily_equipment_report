@@ -156,6 +156,7 @@
                                    readonly="1"
                                    decoration-info="inspection_failure_severity == 'low'"
                                    decoration-warning="inspection_failure_severity == 'medium'"
+                                   decoration-primary="inspection_failure_severity == 'high'"
                                    decoration-danger="inspection_failure_severity == 'critical'"/>
 
                         </group>
@@ -213,6 +214,7 @@
                        optional="show"
                        decoration-info="inspection_failure_severity == 'low'"
                        decoration-warning="inspection_failure_severity == 'medium'"
+                       decoration-primary="inspection_failure_severity == 'high'"
                        decoration-danger="inspection_failure_severity == 'critical'"/>
 
             </xpath>
@@ -244,6 +246,13 @@
                 <filter string="From Inspections"
                         name="from_inspection"
                         domain="[('is_inspection_generated', '=', True)]"/>
+
+                <filter string="High Inspection Failures"
+                        name="high_inspection_failures"
+                        domain="[
+                            ('is_inspection_generated', '=', True),
+                            ('inspection_failure_severity', '=', 'high')
+                        ]"/>
 
                 <filter string="Critical Inspection Failures"
                         name="critical_inspection_failures"

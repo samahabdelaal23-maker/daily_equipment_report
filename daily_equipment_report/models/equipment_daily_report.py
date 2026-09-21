@@ -339,6 +339,7 @@ class EquipmentDailyReport(models.Model):
         priority_by_severity = {
             "low": "1",
             "medium": "2",
+            "high": "3",
             "critical": "3",
         }
 

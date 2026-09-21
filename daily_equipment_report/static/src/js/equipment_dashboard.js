@@ -485,9 +485,23 @@ export class EquipmentInspectionDashboard
             )
             * 100;
 
-        const stop =
+        const high =
+            (
+                Number(
+                    severity.high
+                    || 0
+                )
+                / total
+            )
+            * 100;
+
+        const mediumStop =
             low
             + medium;
+
+        const highStop =
+            mediumStop
+            + high;
 
         return (
             "background: "
@@ -496,9 +510,12 @@ export class EquipmentInspectionDashboard
             + `${low}%, `
             + "#efbd72 "
             + `${low}% `
-            + `${stop}%, `
+            + `${mediumStop}%, `
+            + "#e89a5b "
+            + `${mediumStop}% `
+            + `${highStop}%, `
             + "#df7e86 "
-            + `${stop}% 100%`
+            + `${highStop}% 100%`
             + ");"
         );
     }
