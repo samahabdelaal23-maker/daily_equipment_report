@@ -63,6 +63,13 @@ class MaintenanceEquipment(models.Model):
         compute="_compute_inspection_maintenance_request_count",
     )
 
+    def action_set_out_of_service(self):
+    for equipment in self:
+        equipment.write({
+            "operational_status": "out_of_service",
+        })
+    return True
+
     @api.depends(
         "spare_part_ids",
         "report_ids",
