@@ -70,6 +70,13 @@ class MaintenanceEquipment(models.Model):
         })
     return True
 
+    def action_return_to_service(self):
+    for equipment in self:
+        equipment.write({
+            "operational_status": "active",
+        })
+    return True
+
     @api.depends(
         "spare_part_ids",
         "report_ids",
