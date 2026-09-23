@@ -64,18 +64,18 @@ class MaintenanceEquipment(models.Model):
     )
 
     def action_set_out_of_service(self):
-    for equipment in self:
-        equipment.write({
-            "operational_status": "out_of_service",
-        })
-    return True
+        for equipment in self:
+            equipment.write({
+                "operational_status": "out_of_service",
+            })
+        return True
 
     def action_return_to_service(self):
-    for equipment in self:
-        equipment.write({
-            "operational_status": "active",
-        })
-    return True
+        for equipment in self:
+            equipment.write({
+                "operational_status": "active",
+            })
+        return True
 
     @api.depends(
         "spare_part_ids",
