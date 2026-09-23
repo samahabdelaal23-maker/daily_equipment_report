@@ -15,6 +15,13 @@
 
                 <header>
 
+                    <button name="action_set_out_of_service"
+                            type="object"
+                            string="Set Out of Service"
+                            class="btn-danger"
+                            icon="fa-ban"
+                            invisible="operational_status == 'out_of_service'"/>
+
                     <field name="operational_status"
                            widget="statusbar"
                            statusbar_visible="active,maintenance,out_of_service"/>
