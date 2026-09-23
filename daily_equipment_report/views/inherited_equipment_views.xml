@@ -22,6 +22,13 @@
                             icon="fa-ban"
                             invisible="operational_status == 'out_of_service'"/>
 
+                    <button name="action_return_to_service"
+                            type="object"
+                            string="Return to Service"
+                            class="btn-primary"
+                            icon="fa-check"
+                            invisible="operational_status != 'out_of_service'"/>
+
                     <field name="operational_status"
                            widget="statusbar"
                            statusbar_visible="active,maintenance,out_of_service"/>
