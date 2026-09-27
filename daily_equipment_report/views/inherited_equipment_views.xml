@@ -83,7 +83,7 @@
 
                         <h1>
                             <field name="name"
-                                   placeholder="e.g. Toyota Land Cruiser"/>
+                                   placeholder="e.g. Breakout Machine"/>
                         </h1>
 
                         <div class="text-muted">
