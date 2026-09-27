@@ -105,7 +105,7 @@
 
                             <field name="model"
                                    string="Model / Brand"
-                                   placeholder="e.g. Toyota Land Cruiser"/>
+                                   placeholder="e.g. Breakout Machine"/>
 
                             <field name="serial_no"
                                    string="Serial / Plate Number"
