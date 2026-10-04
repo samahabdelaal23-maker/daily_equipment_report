@@ -593,7 +593,7 @@
             165px;
 
 
-        span {
+        > span {
 
             display:
                 grid;
@@ -955,4 +955,100 @@
                 18px;
         }
     }
+
+    // =========================================================
+    // Interactive dashboard additions
+    // =========================================================
+
+    .o_eq_card_clickable {
+        cursor: pointer;
+        position: relative;
+        border: 1px solid transparent;
+        transition:
+            transform .18s ease,
+            box-shadow .18s ease,
+            border-color .18s ease;
+
+        &::after {
+            content: "\f08e";
+            font-family: FontAwesome;
+            position: absolute;
+            top: 18px;
+            right: 20px;
+            font-size: 13px;
+            opacity: 0;
+            color: #596171;
+            transform: translateY(3px);
+            transition: opacity .18s ease, transform .18s ease;
+        }
+
+        &:hover,
+        &:focus-visible {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 24px rgba(26, 31, 44, .10);
+            border-color: rgba(80, 88, 104, .12);
+            outline: none;
+        }
+
+        &:hover::after,
+        &:focus-visible::after {
+            opacity: .75;
+            transform: translateY(0);
+        }
+
+        &:active {
+            transform: translateY(-1px);
+        }
+    }
+
+    .o_eq_donut {
+        transition: transform .20s ease, filter .20s ease;
+    }
+
+    .o_eq_donut_hovered {
+        transform: scale(1.045);
+        filter: drop-shadow(0 8px 12px rgba(26, 31, 44, .10));
+    }
+
+    .o_eq_donut_center strong,
+    .o_eq_donut_center small {
+        transition: transform .18s ease, opacity .18s ease;
+    }
+
+    .o_eq_legend_item {
+        border-radius: 10px;
+        padding: 8px 10px;
+        margin: -4px -10px;
+        transition: background .16s ease, transform .16s ease;
+
+        > span {
+            display: inline;
+            color: #5a606d;
+
+            small {
+                color: #969ca7;
+                font-size: 11px;
+            }
+        }
+    }
+
+    .o_eq_legend_clickable {
+        cursor: pointer;
+
+        &:hover,
+        &:focus-visible {
+            background: #f5f6f8;
+            transform: translateX(4px);
+            outline: none;
+        }
+
+        &:hover .o_eq_dot {
+            transform: scale(1.25);
+        }
+    }
+
+    .o_eq_dot {
+        transition: transform .16s ease;
+    }
+
 }
