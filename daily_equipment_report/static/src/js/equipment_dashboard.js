@@ -47,6 +47,11 @@ export class EquipmentInspectionDashboard
 
             data: null,
 
+            hover: {
+                equipment: "",
+                severity: "",
+            },
+
             filters: {
 
                 date_from:
@@ -518,6 +523,103 @@ export class EquipmentInspectionDashboard
             + `${highStop}% 100%`
             + ");"
         );
+    }
+
+    get equipmentHoverValue() {
+        const key = this.state.hover.equipment;
+        if (!key) {
+            return this.state.data?.equipment?.total || 0;
+        }
+        return this.state.data?.equipment?.[key] || 0;
+    }
+
+    get equipmentHoverLabel() {
+        const labels = {
+            active: "Active",
+            maintenance: "Maintenance",
+            out_of_service: "Out of Service",
+        };
+        return labels[this.state.hover.equipment] || "Total";
+    }
+
+    get severityHoverValue() {
+        const key = this.state.hover.severity;
+        if (!key) {
+            return this.state.data?.analytics?.severity?.total || 0;
+        }
+        return this.state.data?.analytics?.severity?.[key] || 0;
+    }
+
+    get severityHoverLabel() {
+        const labels = {
+            low: "Low",
+            medium: "Medium",
+            high: "High",
+            critical: "Critical",
+        };
+        return labels[this.state.hover.severity] || "Failures";
+    }
+
+    equipmentPercent(key) {
+        const equipment = this.state.data?.equipment || {};
+        const total = Number(equipment.total || 0);
+        if (!total) {
+            return 0;
+        }
+        return Math.round((Number(equipment[key] || 0) / total) * 100);
+    }
+
+    severityPercent(key) {
+        const severity = this.state.data?.analytics?.severity || {};
+        const total = Number(severity.total || 0);
+        if (!total) {
+            return 0;
+        }
+        return Math.round((Number(severity[key] || 0) / total) * 100);
+    }
+
+    setEquipmentHover(ev) {
+        this.state.hover.equipment = ev.currentTarget.dataset.status || "";
+    }
+
+    clearEquipmentHover() {
+        this.state.hover.equipment = "";
+    }
+
+    setSeverityHover(ev) {
+        this.state.hover.severity = ev.currentTarget.dataset.severity || "";
+    }
+
+    clearSeverityHover() {
+        this.state.hover.severity = "";
+    }
+
+    async openEquipmentList(ev) {
+        const status = ev?.currentTarget?.dataset?.status || false;
+
+        const action = await this.orm.call(
+            "equipment.inspection.dashboard",
+            "action_open_equipment_list",
+            [this.state.filters, status]
+        );
+
+        if (action) {
+            await this.action.doAction(action);
+        }
+    }
+
+    async openSeverityInspections(ev) {
+        const severity = ev?.currentTarget?.dataset?.severity || false;
+
+        const action = await this.orm.call(
+            "equipment.inspection.dashboard",
+            "action_open_severity_inspections",
+            [this.state.filters, severity]
+        );
+
+        if (action) {
+            await this.action.doAction(action);
+        }
     }
 
     async openInspection(ev) {
