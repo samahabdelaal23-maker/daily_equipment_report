@@ -830,6 +830,138 @@ class EquipmentInspectionDashboard(models.AbstractModel):
                 "current",
         }
 
+    @api.model
+    def action_open_equipment_list(self, filters=None, status=False):
+        """Open the custom Equipment list using the current dashboard filters."""
+        filters = filters or {}
+
+        domain = []
+
+        category_id = self._to_int(filters.get("category_id"))
+        equipment_id = self._to_int(filters.get("equipment_id"))
+        location = (filters.get("location") or "").strip()
+
+        if category_id:
+            domain.append(("category_id", "=", category_id))
+
+        if equipment_id:
+            domain.append(("id", "=", equipment_id))
+
+        if location:
+            domain.append(("location", "=", location))
+
+        # A KPI/chart click explicitly selects a status.  For Total,
+        # keep the operational-status filter already selected on dashboard.
+        effective_status = status or filters.get("operational_status") or False
+        if effective_status:
+            domain.append(("operational_status", "=", effective_status))
+
+        list_view = self.env.ref(
+            "daily_equipment_report.view_daily_inspection_equipment_list"
+        )
+        form_view = self.env.ref(
+            "daily_equipment_report.view_daily_inspection_equipment_form"
+        )
+        search_view = self.env.ref(
+            "daily_equipment_report.view_daily_inspection_equipment_search"
+        )
+
+        names = {
+            "active": "Active Equipment",
+            "maintenance": "Equipment Under Maintenance",
+            "out_of_service": "Out of Service Equipment",
+        }
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": names.get(effective_status, "Equipment"),
+            "res_model": "maintenance.equipment",
+            "view_mode": "list,form",
+            "views": [
+                (list_view.id, "list"),
+                (form_view.id, "form"),
+            ],
+            "search_view_id": [search_view.id, search_view.name],
+            "domain": domain,
+            "context": {},
+            "target": "current",
+        }
+
+    @api.model
+    def action_open_severity_inspections(self, filters=None, severity=False):
+        """Open inspections containing failed checks of the selected severity."""
+        filters = filters or {}
+        severity = severity or filters.get("severity") or False
+
+        Equipment = self.env["maintenance.equipment"]
+        Line = self.env["equipment.daily.report.line"]
+
+        equipment_domain = []
+
+        category_id = self._to_int(filters.get("category_id"))
+        equipment_id = self._to_int(filters.get("equipment_id"))
+        location = (filters.get("location") or "").strip()
+        operational_status = filters.get("operational_status") or False
+
+        if category_id:
+            equipment_domain.append(("category_id", "=", category_id))
+        if equipment_id:
+            equipment_domain.append(("id", "=", equipment_id))
+        if location:
+            equipment_domain.append(("location", "=", location))
+        if operational_status:
+            equipment_domain.append(("operational_status", "=", operational_status))
+
+        equipment_ids = Equipment.search(equipment_domain).ids
+
+        today = fields.Date.context_today(self)
+        date_from = self._to_date(filters.get("date_from")) or (today - timedelta(days=29))
+        date_to = self._to_date(filters.get("date_to")) or today
+        if date_from > date_to:
+            date_from, date_to = date_to, date_from
+
+        line_domain = [
+            ("answer", "=", "no"),
+            ("report_id.equipment_id", "in", equipment_ids),
+        ]
+        line_domain += self._datetime_domain(
+            "report_id.report_date",
+            date_from,
+            date_to,
+        )
+        if severity:
+            line_domain.append(("failure_severity", "=", severity))
+
+        report_ids = list(set(Line.search(line_domain).mapped("report_id").ids))
+
+        list_view = self.env.ref(
+            "daily_equipment_report.view_equipment_daily_report_list"
+        )
+        form_view = self.env.ref(
+            "daily_equipment_report.view_equipment_daily_report_form"
+        )
+
+        labels = {
+            "low": "Low Severity Inspections",
+            "medium": "Medium Severity Inspections",
+            "high": "High Severity Inspections",
+            "critical": "Critical Severity Inspections",
+        }
+
+        return {
+            "type": "ir.actions.act_window",
+            "name": labels.get(severity, "Failed Inspections"),
+            "res_model": "equipment.daily.report",
+            "view_mode": "list,form",
+            "views": [
+                (list_view.id, "list"),
+                (form_view.id, "form"),
+            ],
+            "domain": [("id", "in", report_ids)],
+            "context": {},
+            "target": "current",
+        }
+
     # =========================================================
     # Filter data
     # =========================================================
