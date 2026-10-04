@@ -375,7 +375,10 @@
                     <div class="o_eq_cards o_eq_cards_4">
 
 
-                        <div class="o_eq_card o_eq_card_peach">
+                        <div class="o_eq_card o_eq_card_peach o_eq_card_clickable"
+                             role="button"
+                             title="Open equipment list"
+                             t-on-click="openEquipmentList">
 
                             <span>Total Equipment</span>
 
@@ -388,7 +391,11 @@
                         </div>
 
 
-                        <div class="o_eq_card o_eq_card_green">
+                        <div class="o_eq_card o_eq_card_green o_eq_card_clickable"
+                             role="button"
+                             title="Open active equipment"
+                             data-status="active"
+                             t-on-click="openEquipmentList">
 
                             <span>Active</span>
 
@@ -401,7 +408,11 @@
                         </div>
 
 
-                        <div class="o_eq_card o_eq_card_blue">
+                        <div class="o_eq_card o_eq_card_blue o_eq_card_clickable"
+                             role="button"
+                             title="Open equipment under maintenance"
+                             data-status="maintenance"
+                             t-on-click="openEquipmentList">
 
                             <span>
                                 Under Maintenance
@@ -416,7 +427,11 @@
                         </div>
 
 
-                        <div class="o_eq_card o_eq_card_red">
+                        <div class="o_eq_card o_eq_card_red o_eq_card_clickable"
+                             role="button"
+                             title="Open out of service equipment"
+                             data-status="out_of_service"
+                             t-on-click="openEquipmentList">
 
                             <span>
                                 Out of Service
@@ -705,13 +720,14 @@
                             <div class="o_eq_donut_wrap">
 
                                 <div class="o_eq_donut"
+                                     t-att-class="state.hover.equipment ? 'o_eq_donut_hovered' : ''"
                                      t-att-style="equipmentDonutStyle">
 
                                     <div class="o_eq_donut_center">
 
-                                        <strong t-esc="state.data.equipment.total"/>
+                                        <strong t-esc="equipmentHoverValue"/>
 
-                                        <small>Total</small>
+                                        <small t-esc="equipmentHoverLabel"/>
 
                                     </div>
 
@@ -720,33 +736,48 @@
 
                                 <div class="o_eq_legend">
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-status="active"
+                                          t-on-mouseenter="setEquipmentHover"
+                                          t-on-mouseleave="clearEquipmentHover"
+                                          t-on-click="openEquipmentList">
 
                                         <i class="o_eq_dot o_eq_dot_green"/>
 
-                                        Active
+                                        <span>Active <small>(<t t-esc="equipmentPercent('active')"/>%)</small></span>
 
                                         <strong t-esc="state.data.equipment.active"/>
 
                                     </span>
 
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-status="maintenance"
+                                          t-on-mouseenter="setEquipmentHover"
+                                          t-on-mouseleave="clearEquipmentHover"
+                                          t-on-click="openEquipmentList">
 
                                         <i class="o_eq_dot o_eq_dot_orange"/>
 
-                                        Maintenance
+                                        <span>Maintenance <small>(<t t-esc="equipmentPercent('maintenance')"/>%)</small></span>
 
                                         <strong t-esc="state.data.equipment.maintenance"/>
 
                                     </span>
 
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-status="out_of_service"
+                                          t-on-mouseenter="setEquipmentHover"
+                                          t-on-mouseleave="clearEquipmentHover"
+                                          t-on-click="openEquipmentList">
 
                                         <i class="o_eq_dot o_eq_dot_red"/>
 
-                                        Out of Service
+                                        <span>Out of Service <small>(<t t-esc="equipmentPercent('out_of_service')"/>%)</small></span>
 
                                         <strong t-esc="state.data.equipment.out_of_service"/>
 
@@ -775,15 +806,14 @@
                             <div class="o_eq_donut_wrap">
 
                                 <div class="o_eq_donut"
+                                     t-att-class="state.hover.severity ? 'o_eq_donut_hovered' : ''"
                                      t-att-style="severityDonutStyle">
 
                                     <div class="o_eq_donut_center">
 
-                                        <strong t-esc="state.data.analytics.severity.total"/>
+                                        <strong t-esc="severityHoverValue"/>
 
-                                        <small>
-                                            Failures
-                                        </small>
+                                        <small t-esc="severityHoverLabel"/>
 
                                     </div>
 
@@ -792,44 +822,64 @@
 
                                 <div class="o_eq_legend">
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-severity="low"
+                                          t-on-mouseenter="setSeverityHover"
+                                          t-on-mouseleave="clearSeverityHover"
+                                          t-on-click="openSeverityInspections">
 
                                         <i class="o_eq_dot o_eq_dot_green"/>
 
-                                        Low
+                                        <span>Low <small>(<t t-esc="severityPercent('low')"/>%)</small></span>
 
                                         <strong t-esc="state.data.analytics.severity.low"/>
 
                                     </span>
 
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-severity="medium"
+                                          t-on-mouseenter="setSeverityHover"
+                                          t-on-mouseleave="clearSeverityHover"
+                                          t-on-click="openSeverityInspections">
 
                                         <i class="o_eq_dot o_eq_dot_orange"/>
 
-                                        Medium
+                                        <span>Medium <small>(<t t-esc="severityPercent('medium')"/>%)</small></span>
 
                                         <strong t-esc="state.data.analytics.severity.medium"/>
 
                                     </span>
 
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-severity="high"
+                                          t-on-mouseenter="setSeverityHover"
+                                          t-on-mouseleave="clearSeverityHover"
+                                          t-on-click="openSeverityInspections">
 
                                         <i class="o_eq_dot o_eq_dot_high"/>
 
-                                        High
+                                        <span>High <small>(<t t-esc="severityPercent('high')"/>%)</small></span>
 
                                         <strong t-esc="state.data.analytics.severity.high"/>
 
                                     </span>
 
 
-                                    <span>
+                                    <span class="o_eq_legend_item o_eq_legend_clickable"
+                                          role="button"
+                                          data-severity="critical"
+                                          t-on-mouseenter="setSeverityHover"
+                                          t-on-mouseleave="clearSeverityHover"
+                                          t-on-click="openSeverityInspections">
 
                                         <i class="o_eq_dot o_eq_dot_red"/>
 
-                                        Critical
+                                        <span>Critical <small>(<t t-esc="severityPercent('critical')"/>%)</small></span>
 
                                         <strong t-esc="state.data.analytics.severity.critical"/>
 
