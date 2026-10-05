@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from collections import defaultdict
 from datetime import datetime, time, timedelta
 
@@ -79,9 +77,6 @@ class EquipmentInspectionDashboard(models.AbstractModel):
 
         equipment_ids = equipment_records.ids
 
-        # =====================================================
-        # Inspection domain
-        # =====================================================
 
         report_domain = [
             ("equipment_id", "in", equipment_ids),
@@ -93,9 +88,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             date_to,
         )
 
-        # =====================================================
-        # Failed inspection lines
-        # =====================================================
+       
 
         failed_line_domain = [
             ("answer", "=", "no"),
@@ -121,9 +114,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
                 )
             )
 
-        # =====================================================
-        # Inspection-generated maintenance requests
-        # =====================================================
+
 
         maintenance_domain = [
             (
@@ -158,9 +149,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
                 )
             )
 
-        # =====================================================
-        # Equipment KPIs
-        # =====================================================
+        
 
         total_equipment = len(
             equipment_records
@@ -194,10 +183,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             total_equipment,
         )
 
-        # =====================================================
-        # Inspection KPIs
-        # =====================================================
-
+        
         total_inspections = Report.search_count(
             report_domain
         )
@@ -331,9 +317,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             completed_inspections,
         )
 
-        # =====================================================
-        # Maintenance KPIs
-        # =====================================================
+
 
         open_maintenance = (
             Maintenance.search_count(
@@ -392,9 +376,6 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             )
         )
 
-        # =====================================================
-        # Spare parts
-        # =====================================================
 
         spare_part_domain = [
             (
@@ -445,9 +426,6 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             - due_soon_parts
         )
 
-        # =====================================================
-        # Analytics
-        # =====================================================
 
         severity_counts = (
             self._severity_counts(
@@ -486,9 +464,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             )
         )
 
-        # =====================================================
-        # Detail tables
-        # =====================================================
+
 
         recent_critical = (
             self._recent_critical(
@@ -673,9 +649,6 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             },
         }
 
-    # =========================================================
-    # Dashboard navigation
-    # =========================================================
 
     @api.model
     def action_open_equipment(
@@ -695,9 +668,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
         if not equipment:
             return False
 
-        # Explicitly open OUR custom equipment view.
-        # This avoids changing/using the standard Odoo
-        # Maintenance equipment form.
+        
         view = self.env.ref(
             "daily_equipment_report."
             "view_daily_inspection_equipment_form"
@@ -850,8 +821,6 @@ class EquipmentInspectionDashboard(models.AbstractModel):
         if location:
             domain.append(("location", "=", location))
 
-        # A KPI/chart click explicitly selects a status.  For Total,
-        # keep the operational-status filter already selected on dashboard.
         effective_status = status or filters.get("operational_status") or False
         if effective_status:
             domain.append(("operational_status", "=", effective_status))
@@ -962,9 +931,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             "target": "current",
         }
 
-    # =========================================================
-    # Filter data
-    # =========================================================
+   
 
     @api.model
     def _get_filter_options(self):
@@ -1074,9 +1041,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             ],
         }
 
-    # =========================================================
-    # Failure severity
-    # =========================================================
+ 
 
     @api.model
     def _severity_counts(
@@ -1115,10 +1080,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
 
         return result
 
-    # =========================================================
-    # Top defects
-    # =========================================================
-
+   
     @api.model
     def _top_defects(
         self,
@@ -1277,9 +1239,6 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             in sorted_rows[:10]
         ]
 
-    # =========================================================
-    # Inspection trend
-    # =========================================================
 
     @api.model
     def _inspection_trend(
@@ -1381,9 +1340,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
 
         return points[-18:]
 
-    # =========================================================
-    # Critical inspections table
-    # =========================================================
+   
 
     @api.model
     def _recent_critical(
@@ -1477,9 +1434,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
 
         return rows
 
-    # =========================================================
-    # Equipment requiring attention
-    # =========================================================
+   
 
     @api.model
     def _equipment_attention(
@@ -1541,9 +1496,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             for rec in records
         ]
 
-    # =========================================================
-    # Overdue spare parts table
-    # =========================================================
+   
 
     @api.model
     def _overdue_parts_rows(
@@ -1695,10 +1648,7 @@ class EquipmentInspectionDashboard(models.AbstractModel):
             for req in requests
         ]
 
-    # =========================================================
-    # Helpers
-    # =========================================================
-
+    
     @staticmethod
     def _to_int(value):
 
