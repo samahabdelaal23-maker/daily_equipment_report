@@ -85,6 +85,49 @@ class MaintenanceRequest(models.Model):
             "target": "current",
         }
 
+
+    def write(self, vals):
+        result = super().write(vals)
+
+        if "stage_id" in vals:
+            self._sync_equipment_operational_status()
+
+        return result
+
+    def _sync_equipment_operational_status(self):
+        """Keep the equipment operational status aligned with maintenance.
+
+        - In Progress  -> Under Maintenance
+        - Repaired     -> Active, but only when the equipment has no other
+                          maintenance request currently In Progress.
+
+        Other stages are intentionally left unchanged so that inspection
+        logic (for example, Critical -> Out of Service) remains authoritative.
+        """
+        MaintenanceRequest = self.env["maintenance.request"]
+
+        for request in self:
+            equipment = request.equipment_id
+            if not equipment or not request.stage_id:
+                continue
+
+            stage_name = (request.stage_id.name or "").strip().casefold()
+
+            if stage_name == "in progress":
+                if equipment.operational_status != "maintenance":
+                    equipment.operational_status = "maintenance"
+                continue
+
+            if stage_name == "repaired":
+                other_in_progress = MaintenanceRequest.search_count([
+                    ("id", "!=", request.id),
+                    ("equipment_id", "=", equipment.id),
+                    ("stage_id.name", "=ilike", "In Progress"),
+                ])
+
+                if not other_in_progress and equipment.operational_status != "active":
+                    equipment.operational_status = "active"
+
     _sql_constraints = [
         (
             "inspection_line_unique",
