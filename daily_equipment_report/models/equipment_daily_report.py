@@ -417,7 +417,6 @@ class EquipmentDailyReport(models.Model):
             ]
 
             for line in failed_lines:
-                # Duplicate protection at ORM level.
                 if line.maintenance_request_ids:
                     continue
 
@@ -580,8 +579,7 @@ class EquipmentDailyReport(models.Model):
 
             report._validate_submission()
 
-            # Create maintenance requests before changing state.
-            # If creation fails, the complete transaction rolls back.
+            
             report._create_maintenance_requests()
 
             if report.has_critical_issue:
