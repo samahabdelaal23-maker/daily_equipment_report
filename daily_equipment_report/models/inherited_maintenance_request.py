@@ -95,15 +95,7 @@ class MaintenanceRequest(models.Model):
         return result
 
     def _sync_equipment_operational_status(self):
-        """Keep the equipment operational status aligned with maintenance.
-
-        - In Progress  -> Under Maintenance
-        - Repaired     -> Active, but only when the equipment has no other
-                          maintenance request currently In Progress.
-
-        Other stages are intentionally left unchanged so that inspection
-        logic (for example, Critical -> Out of Service) remains authoritative.
-        """
+        
         MaintenanceRequest = self.env["maintenance.request"]
 
         for request in self:
