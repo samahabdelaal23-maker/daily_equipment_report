@@ -85,31 +85,61 @@ class MaintenanceRequest(models.Model):
             "target": "current",
         }
 
-
     def write(self, vals):
         result = super().write(vals)
 
+        # Synchronize the equipment operational status whenever
+        # the maintenance request stage changes.
         if "stage_id" in vals:
             self._sync_equipment_operational_status()
 
         return result
 
     def _sync_equipment_operational_status(self):
-        
+        """
+        Synchronize equipment operational status with the
+        maintenance request workflow.
+
+        In Progress -> Under Maintenance
+        Repaired    -> Active, if no other request is In Progress
+        Scrap       -> Out of Service
+        """
+
         MaintenanceRequest = self.env["maintenance.request"]
 
         for request in self:
             equipment = request.equipment_id
+
             if not equipment or not request.stage_id:
                 continue
 
             stage_name = (request.stage_id.name or "").strip().casefold()
 
+            # -----------------------------------------------------
+            # IN PROGRESS
+            # Equipment is currently being maintained.
+            # -----------------------------------------------------
             if stage_name == "in progress":
                 if equipment.operational_status != "maintenance":
                     equipment.operational_status = "maintenance"
+
                 continue
 
+            # -----------------------------------------------------
+            # SCRAP
+            # Equipment must be taken out of service.
+            # -----------------------------------------------------
+            if stage_name == "scrap":
+                if equipment.operational_status != "out_of_service":
+                    equipment.operational_status = "out_of_service"
+
+                continue
+
+            # -----------------------------------------------------
+            # REPAIRED
+            # Return equipment to Active only when there are
+            # no other maintenance requests still In Progress.
+            # -----------------------------------------------------
             if stage_name == "repaired":
                 other_in_progress = MaintenanceRequest.search_count([
                     ("id", "!=", request.id),
@@ -117,7 +147,10 @@ class MaintenanceRequest(models.Model):
                     ("stage_id.name", "=ilike", "In Progress"),
                 ])
 
-                if not other_in_progress and equipment.operational_status != "active":
+                if (
+                    not other_in_progress
+                    and equipment.operational_status != "active"
+                ):
                     equipment.operational_status = "active"
 
     _sql_constraints = [
